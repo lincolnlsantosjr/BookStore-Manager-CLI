@@ -1,6 +1,6 @@
 export class ErroNegocio extends Error {
   constructor(message: string) {
     super(message);
-    this.name = 'ErroNegocio';
+    this.name = "ErroNegocio";
   }
 }

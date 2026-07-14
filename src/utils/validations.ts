@@ -1,5 +1,5 @@
 export function isNonEmptyString(value: string | undefined | null): boolean {
-  return typeof value === 'string' && value.trim().length > 0;
+  return typeof value === "string" && value.trim().length > 0;
 }
 
 export function isValidEmail(email: string): boolean {
@@ -22,8 +22,8 @@ export function parseIntOrNull(value: string): number | null {
 }
 
 export function formatarData(data: Date | string | null | undefined): string {
-  if (!data) return '-';
+  if (!data) return "-";
   const d = new Date(data);
-  if (Number.isNaN(d.getTime())) return '-';
-  return d.toLocaleString('pt-BR');
+  if (Number.isNaN(d.getTime())) return "-";
+  return d.toLocaleString("pt-BR");
 }

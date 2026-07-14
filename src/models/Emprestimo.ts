@@ -1,4 +1,4 @@
-export type StatusEmprestimo = 'ativo' | 'devolvido';
+export type StatusEmprestimo = "ativo" | "devolvido";
 
 export interface EmprestimoProps {
   id?: number;
@@ -23,7 +23,7 @@ export class Emprestimo {
     this.clienteId = props.clienteId;
     this.dataEmprestimo = props.dataEmprestimo;
     this.dataDevolucao = props.dataDevolucao ?? null;
-    this.status = props.status ?? 'ativo';
+    this.status = props.status ?? "ativo";
   }
 }
 

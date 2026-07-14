@@ -1,5 +1,5 @@
-import { pool } from '../database/connection';
-import { Livro, LivroComAutor } from '../models/Livro';
+import { pool } from "../database/connection";
+import { Livro, LivroComAutor } from "../models/livro";
 
 export class LivroRepository {
   async create(livro: Livro): Promise<Livro> {
@@ -14,7 +14,7 @@ export class LivroRepository {
         livro.anoPublicacao,
         livro.quantidadeTotal,
         livro.quantidadeDisponivel,
-      ]
+      ],
     );
     return this.mapRow(result.rows[0]);
   }
@@ -24,7 +24,7 @@ export class LivroRepository {
       `SELECT l.*, a.nome AS nome_autor
        FROM livros l
        INNER JOIN autores a ON a.id = l.autor_id
-       ORDER BY l.id`
+       ORDER BY l.id`,
     );
     return result.rows.map(this.mapRowComAutor);
   }
@@ -44,14 +44,23 @@ export class LivroRepository {
     const genero = dados.genero ?? atual.genero;
     const anoPublicacao = dados.anoPublicacao ?? atual.anoPublicacao;
     const quantidadeTotal = dados.quantidadeTotal ?? atual.quantidadeTotal;
-    const quantidadeDisponivel = dados.quantidadeDisponivel ?? atual.quantidadeDisponivel;
+    const quantidadeDisponivel =
+      dados.quantidadeDisponivel ?? atual.quantidadeDisponivel;
 
     const result = await pool.query(
       `UPDATE livros
        SET titulo = $1, autor_id = $2, genero = $3, ano_publicacao = $4,
            quantidade_total = $5, quantidade_disponivel = $6
        WHERE id = $7 RETURNING *`,
-      [titulo, autorId, genero, anoPublicacao, quantidadeTotal, quantidadeDisponivel, id]
+      [
+        titulo,
+        autorId,
+        genero,
+        anoPublicacao,
+        quantidadeTotal,
+        quantidadeDisponivel,
+        id,
+      ],
     );
     return this.mapRow(result.rows[0]);
   }
@@ -64,19 +73,22 @@ export class LivroRepository {
   async decrementarDisponibilidade(id: number): Promise<void> {
     await pool.query(
       `UPDATE livros SET quantidade_disponivel = quantidade_disponivel - 1 WHERE id = $1`,
-      [id]
+      [id],
     );
   }
 
   async incrementarDisponibilidade(id: number): Promise<void> {
     await pool.query(
       `UPDATE livros SET quantidade_disponivel = quantidade_disponivel + 1 WHERE id = $1`,
-      [id]
+      [id],
     );
   }
 
   async possuiEmprestimosVinculados(id: number): Promise<boolean> {
-    const result = await pool.query(`SELECT 1 FROM emprestimos WHERE livro_id = $1 LIMIT 1`, [id]);
+    const result = await pool.query(
+      `SELECT 1 FROM emprestimos WHERE livro_id = $1 LIMIT 1`,
+      [id],
+    );
     return result.rows.length > 0;
   }
 

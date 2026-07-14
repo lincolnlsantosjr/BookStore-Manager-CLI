@@ -1,5 +1,5 @@
-import { pool } from '../database/connection';
-import { Emprestimo, EmprestimoDetalhado } from '../models/Emprestimo';
+import { pool } from "../database/connection";
+import { Emprestimo, EmprestimoDetalhado } from "../models/emprestimo";
 
 export class EmprestimoRepository {
   async create(emprestimo: Emprestimo): Promise<Emprestimo> {
@@ -7,7 +7,7 @@ export class EmprestimoRepository {
       `INSERT INTO emprestimos (livro_id, cliente_id, status)
        VALUES ($1, $2, 'ativo')
        RETURNING *`,
-      [emprestimo.livroId, emprestimo.clienteId]
+      [emprestimo.livroId, emprestimo.clienteId],
     );
     return this.mapRow(result.rows[0]);
   }
@@ -19,13 +19,15 @@ export class EmprestimoRepository {
        FROM emprestimos e
        INNER JOIN livros l ON l.id = e.livro_id
        INNER JOIN clientes c ON c.id = e.cliente_id
-       ORDER BY e.id`
+       ORDER BY e.id`,
     );
     return result.rows.map(this.mapRowDetalhado);
   }
 
   async findById(id: number): Promise<Emprestimo | null> {
-    const result = await pool.query(`SELECT * FROM emprestimos WHERE id = $1`, [id]);
+    const result = await pool.query(`SELECT * FROM emprestimos WHERE id = $1`, [
+      id,
+    ]);
     if (result.rows.length === 0) return null;
     return this.mapRow(result.rows[0]);
   }
@@ -34,7 +36,7 @@ export class EmprestimoRepository {
     const result = await pool.query(
       `UPDATE emprestimos SET status = 'devolvido', data_devolucao = NOW()
        WHERE id = $1 RETURNING *`,
-      [id]
+      [id],
     );
     if (result.rows.length === 0) return null;
     return this.mapRow(result.rows[0]);

@@ -1,11 +1,11 @@
-import { pool } from '../database/connection';
-import { Cliente } from '../models/Cliente';
+import { pool } from "../database/connection";
+import { Cliente } from "../models/cliente";
 
 export class ClienteRepository {
   async create(cliente: Cliente): Promise<Cliente> {
     const result = await pool.query(
       `INSERT INTO clientes (nome, email, telefone) VALUES ($1, $2, $3) RETURNING *`,
-      [cliente.nome, cliente.email, cliente.telefone]
+      [cliente.nome, cliente.email, cliente.telefone],
     );
     return this.mapRow(result.rows[0]);
   }
@@ -16,13 +16,17 @@ export class ClienteRepository {
   }
 
   async findById(id: number): Promise<Cliente | null> {
-    const result = await pool.query(`SELECT * FROM clientes WHERE id = $1`, [id]);
+    const result = await pool.query(`SELECT * FROM clientes WHERE id = $1`, [
+      id,
+    ]);
     if (result.rows.length === 0) return null;
     return this.mapRow(result.rows[0]);
   }
 
   async findByEmail(email: string): Promise<Cliente | null> {
-    const result = await pool.query(`SELECT * FROM clientes WHERE email = $1`, [email]);
+    const result = await pool.query(`SELECT * FROM clientes WHERE email = $1`, [
+      email,
+    ]);
     if (result.rows.length === 0) return null;
     return this.mapRow(result.rows[0]);
   }
@@ -37,7 +41,7 @@ export class ClienteRepository {
 
     const result = await pool.query(
       `UPDATE clientes SET nome = $1, email = $2, telefone = $3 WHERE id = $4 RETURNING *`,
-      [nome, email, telefone, id]
+      [nome, email, telefone, id],
     );
     return this.mapRow(result.rows[0]);
   }
@@ -48,7 +52,10 @@ export class ClienteRepository {
   }
 
   async possuiEmprestimosVinculados(id: number): Promise<boolean> {
-    const result = await pool.query(`SELECT 1 FROM emprestimos WHERE cliente_id = $1 LIMIT 1`, [id]);
+    const result = await pool.query(
+      `SELECT 1 FROM emprestimos WHERE cliente_id = $1 LIMIT 1`,
+      [id],
+    );
     return result.rows.length > 0;
   }
 
